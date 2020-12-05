@@ -83,4 +83,25 @@ plotErrors(errF, nominalQ=TRUE)
 ```{r}
 plotErrors(errR, nominalQ=TRUE)
 ```
+# Sample Inference
+Ici nous créons une autre variable "dadaFs" dans laquelle nous mettons les fichiers obtenus après avoir filtré et appliqué le profil d'erreur à nos séquences. Nous allons faire la même chose avec dadaRS.
+
+```{r}
+dadaFs <- dada(filtFs, err=errF, multithread=TRUE)
+```
+```{r}
+dadaRs <- dada(filtRs, err=errR, multithread=TRUE)
+```
+Cette commande nous permet de visualiser le résultat global qu'on retrouve classé dans la liste dadaFs. Ils nous indiquent que sur les séquences on retrouve 128 séquences qui correspondent aux vrais variants, par rapport aux 1979 séquences. Ils nous indiquent aussi les diagnostiques de qualité.
+```{r}
+dadaFs[[1]]
+```
+# Merge paired reads
+Ici nous voulons mettre en une seule séquence les Forwards et les Reverses.Nous pouvons faire cette opération grâce aux overlaps de 12 paires de base. Cela se fait grâce à un alignement entre les forwards et les reverses qui vont permettre de contruire les contigs.
+```{r}
+mergers <- mergePairs(dadaFs, filtFs, dadaRs, filtRs, verbose=TRUE)
+# Inspect the merger data.frame from the first sample
+head(mergers[[1]])
+```
+
 
