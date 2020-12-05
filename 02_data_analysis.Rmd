@@ -55,9 +55,32 @@ print(filtFs)
 ```
 
 ```{r}
-out<-filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(210,150),trimLeft=c(21,0),
+out<-filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(210,200),trimLeft=c(21),
               maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
               compress=TRUE, multithread=TRUE) # On Windows set multithread=FALSE
+```
+
+```{r}
 head(out)
+```
+# Learn the Error Rates
+ Nous allons ici utiliser des lignes de commandes qui vont permettre d'apprendre à la machine les différents profils d'erreurs générées lors du séquençage. L'opération est faite sur les deux types de séquence.
+ 
+```{r}
+errF <- learnErrors(filtFs, multithread=TRUE)
+```
+
+```{r}
+errR <- learnErrors(filtRs, multithread=TRUE)
+```
+Chaque transition (mutation) possible (A→C, A→G, ...) le taux d'erreur sont indiqués. 
+-points : les taux d'erreur observés pour chaque score de qualité du consensus. 
+-ligne noire : taux d'erreur estimés après convergence de l'algorithme d'apprentissage machine. 
+-ligne rouge : taux d'erreur attendus selon la définition nominale du Q-score.
+```{r}
+plotErrors(errF, nominalQ=TRUE)
+```
+```{r}
+plotErrors(errR, nominalQ=TRUE)
 ```
 
