@@ -10,6 +10,8 @@ output:
 library (phyloseq)
 library(ggplot2)
 library (dada2)
+library(Biostrings)
+theme_set(theme_bw())
 ```
 
 #création variable
@@ -132,6 +134,33 @@ track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, 
 colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
 rownames(track) <- sample.names
 head(track)
+```
+# Assign taxonomy
+Ici nous avons du récupérer silva afin d'analyser et d'assigner les taxonomies.
+```{bash}
+wget https://zenodo.org/record/3986799/files/silva_species_assignment_v138.fa.gz
+```
+Ici nous créons une variable qui va recevoir les espèces obtenues grâce à Silva
+
+```{r}
+taxa <- assignTaxonomy(seqtab.nochim, "~/silva_nr99_v138_train_set.fa.gz", multithread=TRUE)
+```
+
+```{r}
+taxa <- addSpecies(taxa, "~/silva_species_assignment_v138.fa.gz")
+```
+On remarque donc après avoir affiché la table qu'on a créée on obtient une majorité de  Bacteroidetes ce qui est normal dans des échantillons fécaux. D'autres espèces n'ont pas pu être assignées car on a peu de données sur les bactéries des intestins des souris. 
+```{r}
+taxa.print <- taxa # Removing sequence rownames for display only
+rownames(taxa.print) <- NULL
+head(taxa.print)
+```
+
+# Taxonomic Filtering
+ Ces lignes de codes nous permettent de compter le nombre d'echantillons qu'on a pour chaque phylums.
+```{r}
+# Show available ranks in the dataset
+rank_names(taxa)
 ```
 
 
